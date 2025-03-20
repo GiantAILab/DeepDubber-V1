@@ -122,15 +122,17 @@ def load_video(
     input_size=448,
     max_num=1,
     num_segments=32,
-    cache_dir="~/.cache/expcache",
+    cache_dir=".cache/expcache",
 ):
     vr = VideoReader(video_path, ctx=cpu(0), num_threads=1)
     max_frame = len(vr) - 1
     fps = float(vr.get_avg_fps())
 
+    video_cache_dir = video_path.split("/")[-2] + "_" + os.path.basename(video_path).split(".")[0]
+    video_cache_dir = os.path.join(cache_dir, video_cache_dir)
     cache_filename = os.path.join(
-        cache_dir,
-        f"{video_path.split('/')[-2]}_{os.path.basename(video_path).split('.')[0]}_bound-{bound}_input_size-{input_size}_max_num-{max_num}_num_segments-{num_segments}.pt",
+        video_cache_dir,
+        f"_bound-{bound}_input_size-{input_size}_max_num-{max_num}_num_segments-{num_segments}.pt",
     )
     if os.path.exists(cache_filename) and os.path.isfile(cache_filename):
         cache = torch.load(cache_filename, weights_only=True)
@@ -145,15 +147,13 @@ def load_video(
         frame_indices = np.append(0, frame_indices)  # Add 0 at the beginning of the list
         frame_indices = np.append(frame_indices, max_frame)  # Add max_frame at the end of the list
 
-        img_folder_name = video_path.split("/")[-2] + "_" + os.path.basename(video_path).split(".")[0]
-        img_save_dir = os.path.join(cache_dir, img_folder_name)
-        os.makedirs(img_save_dir, exist_ok=True)
+        os.makedirs(video_cache_dir, exist_ok=True)
 
         idx = 0
         for frame_index in frame_indices:
             img = Image.fromarray(vr[frame_index].asnumpy()).convert("RGB")
 
-            img.save(os.path.join(img_save_dir, f"frame_{frame_index}_tile_{idx}.png"))
+            img.save(os.path.join(video_cache_dir, f"frame_{frame_index}_tile_{idx}.png"))
 
             img = dynamic_preprocess(img, image_size=input_size, use_thumbnail=True, max_num=max_num)
 
