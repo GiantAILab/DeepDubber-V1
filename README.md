@@ -1,11 +1,11 @@
 <div align="center">
 <p align="center">
   <h2>DeepDubber-V1</h2>
-  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1">Webpage</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> 
+  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1/">Webpage</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> 
 </p>
 </div>
 
-## [DeepDubber-V1: Towards High Quality and Dialogue, Narration, Monologue Adaptive Movie Dubbing Via Multi-Modal Chain-of-Thoughts Reasoning Guidance](https://xxxxx.github.io/DeepDubber-V1)
+## [DeepDubber-V1: Towards High Quality and Dialogue, Narration, Monologue Adaptive Movie Dubbing Via Multi-Modal Chain-of-Thoughts Reasoning Guidance](https://woka-0a.github.io/DeepDubber-V1/)
 
 <!-- [Ho Kei Cheng](https://hkchengrex.github.io/), [Masato Ishii](https://scholar.google.co.jp/citations?user=RRIO1CcAAAAJ), [Akio Hayakawa](https://scholar.google.com/citations?user=sXAjHFIAAAAJ), [Takashi Shibuya](https://scholar.google.com/citations?user=XCRO260AAAAJ), [Alexander Schwing](https://www.alexander-schwing.de/), [Yuki Mitsufuji](https://www.yukimitsufuji.com/) -->
 
