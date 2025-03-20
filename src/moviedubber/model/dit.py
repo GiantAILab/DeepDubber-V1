@@ -1,3 +1,5 @@
+# modified from https://github.com/SWivid/F5-TTS/blob/main/src/f5_tts/model/backbones/dit.py
+
 """
 ein notation:
 b - batch
@@ -11,11 +13,10 @@ from __future__ import annotations
 
 import torch
 import torch.nn.functional as F
-from einops import pack
 from torch import nn
 from x_transformers.x_transformers import RotaryEmbedding
 
-from moviedubber.model.modules import (
+from .modules import (
     AdaLayerNormZero_Final,
     ConvNeXtV2Block,
     ConvPositionEmbedding,
@@ -163,7 +164,6 @@ class DiT(nn.Module):
         if time.ndim == 0:
             time = time.repeat(batch)
 
-        # t: conditioning time, c: context (text + masked cond audio), x: noised input audio
         t = self.time_embed(time)
         text_embed = self.text_embed(text, seq_len, drop_text=drop_text)
         x = self.input_embed(x, cond, text_embed, drop_audio_cond=drop_audio_cond)
@@ -174,7 +174,8 @@ class DiT(nn.Module):
             residual = x
 
         for i, block in enumerate(self.transformer_blocks):
-            x += controlnet_embeds[i]
+            if controlnet_embeds is not None and i < 12:
+                x += controlnet_embeds[i]
 
             x = block(x, t, mask=mask, rope=rope)
 
@@ -215,7 +216,7 @@ class ControlNetDiT(nn.Module):
         self.rotary_embed = RotaryEmbedding(dim_head)
 
         self.dim = dim
-        self.depth = depth / 2
+        self.depth = depth // 2 + 1
 
         self.transformer_blocks1 = nn.ModuleList(
             [
@@ -237,14 +238,6 @@ class ControlNetDiT(nn.Module):
             nn.init.zeros_(zero_linear.weight)
 
         self.duration_predictor = duration_predictor
-
-    def ckpt_wrapper(self, module):
-        # https://github.com/chuanyangjin/fast-DiT/blob/main/models.py
-        def ckpt_forward(*inputs):
-            outputs = module(*inputs)
-            return outputs
-
-        return ckpt_forward
 
     def forward(
         self,

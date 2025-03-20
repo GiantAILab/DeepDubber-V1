@@ -15,8 +15,8 @@ import torch.nn.functional as F
 import torchaudio
 import tqdm
 
-from moviedubber.model import CFM
-from moviedubber.model.utils import convert_char_to_pinyin, get_tokenizer
+from src.moviedubber.model import CFM
+from src.moviedubber.model.utils import convert_char_to_pinyin, get_tokenizer
 
 
 device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
@@ -121,7 +121,6 @@ def load_checkpoint(model, ckpt_path, device: str, dtype=None, use_ema=True):
         for key in ["mel_spec.mel_stft.mel_scale.fb", "mel_spec.mel_stft.spectrogram.window"]:
             if key in checkpoint["model_state_dict"]:
                 del checkpoint["model_state_dict"][key]
-        print(checkpoint["model_state_dict"].keys())
 
         state_dict_result = model.load_state_dict(checkpoint["model_state_dict"], strict=False)
         if state_dict_result.unexpected_keys:
@@ -153,8 +152,6 @@ def load_model(
     use_ema=True,
     device=device,
 ):
-    if vocab_file == "":
-        vocab_file = str(files("f5_tts").joinpath("infer/examples/vocab.txt"))
     tokenizer = "custom"
 
     print("\nvocab : ", vocab_file)
@@ -187,9 +184,6 @@ def load_model(
     model = load_checkpoint(model, ckpt_path, device, dtype=dtype, use_ema=use_ema)
 
     return model
-
-
-# infer process: chunk text -> infer batches [i.e. infer_batch_process()]
 
 
 def infer_process(
