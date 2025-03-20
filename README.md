@@ -31,17 +31,18 @@ For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html.
 
 ## Environment
 
-Our python version is 3.10 and cuda version 11.8. Both training and inference are implemented with PyTorch on a NVIDIA A800 GPU.
+Our python version is 3.9 and cuda version 11.8. Both training and inference are implemented with PyTorch on a NVIDIA A800 GPU.
 
 ### Prerequisites
 
 **1. Install prerequisite if not yet met:**
 
 ```bash
+conda create -n deepdubber python=3.9 && conda activate deepdubber
 pip install -r requirements.txt
 ```
 
-**2. Clone our repository:**
+**2. Clone our repository and init submodules:**
 
 ```bash
 git clone https://github.com/woka-0a/DeepDubber-V1.git
