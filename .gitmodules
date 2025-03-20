@@ -1,8 +1,0 @@
-# git submodule add https://github.com/NVIDIA/BigVGAN.git
-[submodule "src/third_party/BigVGAN"]
-	path = src/third_party/BigVGAN
-	url = https://github.com/NVIDIA/BigVGAN.git
-# git submodule add https://github.com/OpenGVLab/InternVL.git
-[submodule "src/third_party/InternVL"]
-	path = src/third_party/InternVL
-	url = https://github.com/OpenGVLab/InternVL.git

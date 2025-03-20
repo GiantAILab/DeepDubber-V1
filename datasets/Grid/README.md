@@ -1,1 +1,0 @@
-Refer to: [Grid](https://paperswithcode.com/dataset/grid)

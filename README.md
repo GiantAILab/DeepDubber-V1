@@ -1,105 +1,53 @@
-<div align="center">
-<p align="center">
-  <h2>DeepDubber-V1</h2>
-  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1">Webpage</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> 
-</p>
-</div>
+# Academic Project Page Template
+This is an academic paper project page template.
 
-## [DeepDubber-V1: Towards High Quality and Dialogue, Narration, Monologue Adaptive Movie Dubbing Via Multi-Modal Chain-of-Thoughts Reasoning Guidance](https://xxxxx.github.io/DeepDubber-V1)
 
-<!-- [Ho Kei Cheng](https://hkchengrex.github.io/), [Masato Ishii](https://scholar.google.co.jp/citations?user=RRIO1CcAAAAJ), [Akio Hayakawa](https://scholar.google.com/citations?user=sXAjHFIAAAAJ), [Takashi Shibuya](https://scholar.google.com/citations?user=XCRO260AAAAJ), [Alexander Schwing](https://www.alexander-schwing.de/), [Yuki Mitsufuji](https://www.yukimitsufuji.com/) -->
+Example project pages built using this template are:
+- https://horwitz.ai/probex
+- https://vision.huji.ac.il/probegen
+- https://horwitz.ai/mother
+- https://horwitz.ai/spectral_detuning
+- https://vision.huji.ac.il/ladeda
+- https://vision.huji.ac.il/dsire
+- https://horwitz.ai/podd
+- https://dreamix-video-editing.github.io
+- https://horwitz.ai/conffusion
+- https://horwitz.ai/3d_ads/
+- https://vision.huji.ac.il/ssrl_ad
+- https://vision.huji.ac.il/deepsim
 
-<!-- University of xxxx, xxxx, and xxxx Corporation -->
 
-<!-- xxxx 2025 -->
 
-## Results
+## Start using the template
+To start using the template click on `Use this Template`.
 
-Videos from V2CAnimation:
+The template uses html for controlling the content and css for controlling the style. 
+To edit the websites contents edit the `index.html` file. It contains different HTML "building blocks", use whichever ones you need and comment out the rest.  
 
-https://github.com/user-attachments/assets/xxxx
+**IMPORTANT!** Make sure to replace the `favicon.ico` under `static/images/` with one of your own, otherwise your favicon is going to be a dreambooth image of me.
 
-Videos from Grid:
+## Components
+- Teaser video
+- Images Carousel
+- Youtube embedding
+- Video Carousel
+- PDF Poster
+- Bibtex citation
 
-https://github.com/user-attachments/assets/xxxx
+## Tips:
+- The `index.html` file contains comments instructing you what to replace, you should follow these comments.
+- The `meta` tags in the `index.html` file are used to provide metadata about your paper 
+(e.g. helping search engine index the website, showing a preview image when sharing the website, etc.)
+- The resolution of images and videos can usually be around 1920-2048, there rarely a need for better resolution that take longer to load. 
+- All the images and videos you use should be compressed to allow for fast loading of the website (and thus better indexing by search engines). For images, you can use [TinyPNG](https://tinypng.com), for videos you can need to find the tradeoff between size and quality.
+- When using large video files (larger than 10MB), it's better to use youtube for hosting the video as serving the video from the website can take time.
+- Using a tracker can help you analyze the traffic and see where users came from. [statcounter](https://statcounter.com) is a free, easy to use tracker that takes under 5 minutes to set up. 
+- This project page can also be made into a github pages website.
+- Replace the favicon to one of your choosing (the default one is of the Hebrew University). 
+- Suggestions, improvements and comments are welcome, simply open an issue or contact me. You can find my contact information at [https://horwitz.ai](https://horwitz.ai)
 
-Videos from Proposed CoTMovieDubbing Dataset:
+## Acknowledgments
+Parts of this project page were adopted from the [Nerfies](https://nerfies.github.io/) page.
 
-https://github.com/user-attachments/assets/xxxx
-
-For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html.
-
-## Environment
-
-Our python version is 3.10 and cuda version 11.8. Both training and inference are implemented with PyTorch on a NVIDIA A800 GPU.
-
-### Prerequisites
-
-**1. Install prerequisite if not yet met:**
-
-```bash
-pip install -r requirements.txt
-```
-
-**2. Clone our repository:**
-
-```bash
-git clone https://github.com/woka-0a/DeepDubber-V1.git
-
-cd DeepDubber-V1/src/third_party/InternVL/
-git submodule update --init --recursive
-
-cd - && cd DeepDubber-V1/src/third_party/BigvGAN/
-git submodule update --init --recursive
-```
-
-**Pretrained models:**
-
-The models are available at [huggingface.co](https://huggingface.co/woak-oa/DeepDubber-V1/tree/main)
-
-## Inference & Evaluation
-
-```bash
-# MMLM inference & eval
-python src/internvl/eval.py --model_path /path/to/model --test_file /path/to/test_file.lst --video_dir /path/to/video_dir
-# MovieDubber inference
-python src/moviedubber/infer_with_mmlm_result.py --input_list mmlm_res.csv --ref_spk_list datasets/CoTMovieDubbing/filelist/cot_spk_for_speech_gen.lst
-# MovieDubber eval
-python src/moviedubber/eval.py --gen_dir generated --target_dir target
-```
-
-## Training Datasets
-
-DeepDubber-V1 was trained on several datasets, including [V2CAnimation](https://github.com/chenqi008/V2C), [Grid](https://paperswithcode.com/dataset/grid), and proposed [CoTMovieDubbing](https://github.com/woka-0a/DeepDubber-V1/tree/main/datasets/CoTMovieDubbing). These datasets are subject to specific licenses, which can be accessed on their respective websites. We do not guarantee that the pre-trained models are suitable for commercial use. Please use them at your own risk.
-
-## Update Logs
-
-- 2025-03-30: Released pre-trained models on proposed dataset and evaluation script.
-
-<!-- ## Citation
-
-```bibtex
-@inproceedings{cheng2025taming,
-  title={Taming Multimodal Joint Training for High-Quality Video-to-Audio Synthesis},
-  author={Cheng, Ho Kei and Ishii, Masato and Hayakawa, Akio and Shibuya, Takashi and Schwing, Alexander and Mitsufuji, Yuki},
-  booktitle={CVPR},
-  year={2025}
-}
-``` -->
-
-## Acknowledgement and Relevant Repositories
-
-Many thanks to:
-
-- [F5-TTS](https://github.com/SWivid/F5-TTS) for speech synthesis backbone.
-- [InternVL](https://github.com/OpenGVLab/InternVL) for MMLM Backbone.
-- [BigVGAN](https://github.com/NVIDIA/BigVGAN) for high-quality speech generation.
-- [V2C](https://github.com/chenqi008/V2C) for animated movie benchmark.
-- [SyncNet](https://github.com/joonson/syncnet_python) for LSE-C/D evaluation.
-- [Wav2Vec2-Emotion](https://huggingface.co/audeering/wav2vec2-large-robust-12-ft-emotion-msp-dim) for emotion recognition in EMO-SIM evaluation.
-- [WavLM-SV](https://huggingface.co/microsoft/wavlm-base-plus-sv) for speech recognition in SPK-SIM evaluation.
-- [Whisper](https://huggingface.co/openai/whisper-large-v3-turbo) for speech recognition in WER evaluation.
-
-<!-- ## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=woka-0a/DeepDubber-V1&type=Date)](https://www.star-history.com/#woka-0a/DeepDubber-V1&Date) -->
+## Website License
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
