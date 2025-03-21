@@ -1,7 +1,4 @@
-model = "F5-TTS"
-
 ckpt_file = "/path/to/ckpt_file.pth"
 vocab_file = "/path/to/vocab_file.txt"
 vocoder_local_path = "/path/to/bigvgan"
 campplus_path = "/path/to/campplus.onnx"
-
