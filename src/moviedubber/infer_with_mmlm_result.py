@@ -1,6 +1,7 @@
 import argparse
 import os
 import os.path as osp
+import random
 import sys
 from pathlib import Path
 
@@ -301,7 +302,7 @@ if __name__ == "__main__":
             if is_correc == "True":
                 ref_wav = spk_lines[idx].split(",")[1].strip()
             else:
-                ref_wav = "None"
+                ref_wav = random.choice(spk_lines).split(",")[-1].strip()  # Use random speaker for incorrect samples
 
             gen_pre_conf.append([wav_path, mp4_path, text, ref_wav])
 

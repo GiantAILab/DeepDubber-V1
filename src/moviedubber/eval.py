@@ -1,6 +1,7 @@
 import argparse
 import os
 import string
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import librosa
@@ -82,7 +83,7 @@ def wer_pipe(gen_dir: str, target_dir: str, model_id="openai/whisper-large-v3-tu
         if not wav.exists():
             continue
 
-        text = pipe(librosa.load(wav, sr=16000)[0])["text"]
+        text = pipe(librosa.load(wav, sr=16000)[0], generate_kwargs={"language": "english"})["text"]
         with open(wav.with_suffix(".asrtxt"), "w") as fw:
             fw.write(text)
 
@@ -92,9 +93,24 @@ def wer_pipe(gen_dir: str, target_dir: str, model_id="openai/whisper-large-v3-tu
 
     wer = []
     for txt in tqdm(val_list, desc="Calculating WER"):
-        target_text = " ".join(txt.read_text().strip())
-        gen_text = " ".join(Path(os.path.join(gen_dir, txt.name)).read_text().splitlines())
-        wer_ = wer_metric.compute(references=[target_text], predictions=[gen_text])
+        try:
+            # Since the original text is automatically transcribed and has not been manually verified, all texts will be cleaned here.
+
+            target_text = " ".join(set(txt.read_text().splitlines()))
+            target_text = clean_text(target_text)
+
+            gen_text = " ".join(Path(os.path.join(gen_dir, txt.with_suffix(".asrtxt").name)).read_text().splitlines())
+            gen_text = clean_text(gen_text)
+
+            if target_text == "" or gen_text == "":
+                continue
+
+            wer_ = wer_metric.compute(references=[target_text], predictions=[gen_text])
+
+        except Exception as e:
+            print("Error in wer calculation: ", e)
+            continue
+
         wer.append(wer_)
 
     return np.mean(wer)
@@ -132,7 +148,13 @@ def spk_sim_pipe(gen_dir, target_dir):
     return np.mean(scos)
 
 
-def mcd_pipe(gen_dir, target_dir):
+def calculate_mcd_for_wav(target_wav, gen_dir, mcd_toolbox_dtw, mcd_toolbox_dtw_sl):
+    _mcd_dtw = mcd_toolbox_dtw.calculate_mcd(target_wav, os.path.join(gen_dir, target_wav.name))
+    _mcd_dtw_sl = mcd_toolbox_dtw_sl.calculate_mcd(target_wav, os.path.join(gen_dir, target_wav.name))
+    return _mcd_dtw, _mcd_dtw_sl
+
+
+def mcd_pipe(gen_dir, target_dir, num_processes=16):
     mcd_toolbox_dtw = Calculate_MCD(MCD_mode="dtw")
     mcd_toolbox_dtw_sl = Calculate_MCD(MCD_mode="dtw_sl")
 
@@ -141,12 +163,15 @@ def mcd_pipe(gen_dir, target_dir):
     mcd_dtw = []
     mcd_dtw_sl = []
 
-    for target_wav in tqdm(val_list, desc="Calculating MCD"):
-        _mcd_dtw = mcd_toolbox_dtw.calculate_mcd(target_wav, os.path.join(gen_dir, target_wav.name))
-        _mcd_dtw_sl = mcd_toolbox_dtw_sl.calculate_mcd(target_wav, os.path.join(gen_dir, target_wav.name))
-
-        mcd_dtw.append(_mcd_dtw)
-        mcd_dtw_sl.append(_mcd_dtw_sl)
+    with ProcessPoolExecutor(max_workers=num_processes) as executor:
+        futures = [
+            executor.submit(calculate_mcd_for_wav, target_wav, gen_dir, mcd_toolbox_dtw, mcd_toolbox_dtw_sl)
+            for target_wav in val_list
+        ]
+        for future in tqdm(futures, desc="Calculating MCD"):
+            _mcd_dtw, _mcd_dtw_sl = future.result()
+            mcd_dtw.append(_mcd_dtw)
+            mcd_dtw_sl.append(_mcd_dtw_sl)
 
     return np.mean(mcd_dtw), np.mean(mcd_dtw_sl)
 
