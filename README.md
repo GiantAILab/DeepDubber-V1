@@ -1,7 +1,7 @@
 <div align="center">
 <p align="center">
   <h2>DeepDubber-V1</h2>
-  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1/">Webpage</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> 
+  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1/">Webpage</a> | <a href="https://huggingface.co/spaces/woak-oa/Deepdubber-V1">Huggingface Demo</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> 
 </p>
 </div>
 
@@ -31,7 +31,7 @@ For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html.
 
 ## Environment
 
-Our python version is 3.9 and cuda version 11.8. Both training and inference are implemented with PyTorch on a NVIDIA A800 GPU.
+Our python version is 3.9 and cuda version 11.8. Both training and inference are implemented with PyTorch on NVIDIA A800 GPUs.
 
 ### Prerequisites
 
