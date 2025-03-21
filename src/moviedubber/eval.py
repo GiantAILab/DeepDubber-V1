@@ -61,7 +61,7 @@ def clean_text(text):
 def wer_pipe(gen_dir: str, target_dir: str, model_id="openai/whisper-large-v3-turbo"):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-
+    print(f"Using Model: {model_id} for WER Evaluation")
     model = AutoModelForSpeechSeq2Seq.from_pretrained(
         model_id, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
     ).to(device)
