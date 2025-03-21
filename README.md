@@ -61,10 +61,18 @@ The models are available at [huggingface.co](https://huggingface.co/woak-oa/Deep
 ## Inference & Evaluation
 
 ```bash
-# MMLM inference & eval
+# set model path, test file path, and video directory
+# model_path: path to the model
+# test_file: see datasets/CoTMovieDubbing/filelist
+# video_dir: see datasets/CoTMovieDubbing -- Data Tree
+
+# run MMLM inference & eval
+# generate xxx_res.csv file for moviedubber inference
 python src/internvl/eval.py --model_path /path/to/model --test_file /path/to/test_file.lst --video_dir /path/to/video_dir
+
 # MovieDubber inference
 python src/moviedubber/infer_with_mmlm_result.py --input_list mmlm_res.csv --ref_spk_list datasets/CoTMovieDubbing/filelist/cot_spk_for_speech_gen.lst
+
 # MovieDubber eval
 python src/moviedubber/eval.py --gen_dir generated --target_dir target
 ```
