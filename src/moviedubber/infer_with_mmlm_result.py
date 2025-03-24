@@ -38,6 +38,12 @@ from src.moviedubber.model.utils import convert_char_to_pinyin
 
 
 def concat_movie_with_audio(wav, video_path, out_dir):
+    if not os.path.exists(wav):
+        raise FileNotFoundError(f"Audio file {wav} does not exist")
+
+    if not os.path.exists(video_path):
+        raise FileNotFoundError(f"Video file {video_path} does not exist")
+
     try:
         with (
             AudioFileClip(str(wav)) as audio_clip,
@@ -64,6 +70,8 @@ def concat_movie_with_audio(wav, video_path, out_dir):
 
     except Exception as e:
         print(f"Error processing {wav} {video_path}: {str(e)}")
+
+    return output_path
 
 
 def get_spk_emb(audio_path, ort_session):
@@ -252,7 +260,7 @@ def main(config, device, chunk, gen_dir, target_dir, out_dir, idx):
 
             out_path = osp.join(gen_dir, f"{wav.stem}.wav")
             soundfile.write(out_path, generated_wave, samplerate=24000)
-            concat_movie_with_audio(out_path, gen_video, out_dir)
+            _ = concat_movie_with_audio(out_path, gen_video, out_dir)
 
 
 if __name__ == "__main__":
