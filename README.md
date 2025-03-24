@@ -47,10 +47,7 @@ pip install -r requirements.txt
 ```bash
 git clone https://github.com/woka-0a/DeepDubber-V1.git
 
-cd DeepDubber-V1/src/third_party/InternVL/
-git submodule update --init --recursive
-
-cd - && cd DeepDubber-V1/src/third_party/BigvGAN/
+cd DeepDubber-V1/
 git submodule update --init --recursive
 ```
 
