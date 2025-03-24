@@ -6,7 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-
 # Distribution / packaging
 .Python
 build/
@@ -178,3 +177,4 @@ results/
 *csv
 *mp4
 temp/
+src/moviedubber/infer/basic_test.toml
