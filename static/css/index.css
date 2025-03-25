@@ -142,5 +142,13 @@ body {
   max-width: 60%;
   max-height: 60%;
 }
+
+.carousel .item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
 /* width: 600px; Set your desired width */
 /* height: 400px; /* Set your desired height */
