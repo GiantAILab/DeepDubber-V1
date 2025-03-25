@@ -53,7 +53,6 @@ The models are available at [huggingface.co](https://huggingface.co/woak-oa/Deep
 
 ```bash
 # set model path, test file path, and video directory
-# model_path: path to the model
 # test_file: see datasets/CoTMovieDubbing/filelist
 # video_dir: see datasets/CoTMovieDubbing -- Data Tree
 
