@@ -1,5 +1,6 @@
 import json
 import os
+import os.path as osp
 import sys
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import pandas as pd
 import torch
 import torchvision.transforms as T
 from decord import VideoReader, cpu
+from huggingface_hub import snapshot_download
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from tqdm import tqdm
@@ -286,20 +288,21 @@ if __name__ == "__main__":
     import torch.multiprocessing as mp
 
     parser = argparse.ArgumentParser(description="eval script for mmlm")
-    parser.add_argument("--model_path", type=str, help="Path to the model checkpoint.")
     parser.add_argument("--test_file", type=str, help="Path to the test file.")
     parser.add_argument("--video_dir", type=str, help="Path to the test video directory.")
     parser.add_argument("--gpuids", type=str, help="GPU ids to use.")
 
-    # python eval.py --model_path /path/to/model --test_file /path/to/test_file --video_dir /path/to/video_dir --gpuids 0,1,2,3
+    # python eval.py --test_file /path/to/test_file --video_dir /path/to/video_dir --gpuids 0,1,2,3
 
     args = parser.parse_args()
 
-    model_path = args.model_path
     test_file = args.test_file
     video_dir = args.video_dir
 
     gpu_ids = args.gpuids.split(",") if args.gpuids else ["0"]
+
+    repo_local_path = snapshot_download(repo_id="woak-oa/DeepDubber-V1")
+    model_path = osp.join(repo_local_path, "mmlm")
 
     cot_test = Path(test_file).read_text().splitlines()
 
@@ -326,7 +329,7 @@ if __name__ == "__main__":
         res = queue.get()
         result.extend(res)
 
-    res_saved = f"{'__'.join(model_path.split('/'))}_res.csv"
+    res_saved = "mmlm_res.csv"
     with open(res_saved, "w") as f:
         f.write("video_id,is_correct,target,predict\n")
         for res in result:
