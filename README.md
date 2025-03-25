@@ -17,7 +17,7 @@
 
 Videos from V2CAnimation:
 
-https://github.com/user-attachments/assets/xxxx
+https://github.com/user-attachments/assets/5d78401e-efc6-4034-b66b-047aad129338
 
 Videos from Grid:
 
@@ -25,7 +25,7 @@ https://github.com/user-attachments/assets/xxxx
 
 Videos from Proposed CoTMovieDubbing Dataset:
 
-https://github.com/user-attachments/assets/xxxx
+https://github.com/user-attachments/assets/58ab9155-c088-44f8-be5e-1967e01a94bc
 
 For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html.
 
