@@ -8,11 +8,11 @@ from pathlib import Path
 import numpy as np
 import onnxruntime
 import soundfile
-import tomli
 import torch
 import torch.nn.functional as F
 import torchaudio
 import torchaudio.compliance.kaldi as kaldi
+from huggingface_hub import snapshot_download
 from moviepy import AudioFileClip, VideoFileClip
 from omegaconf import OmegaConf
 from pydub import AudioSegment
@@ -28,7 +28,6 @@ from src.moviedubber.infer.utils_infer import (
     chunk_text,
     load_model,
     load_vocoder,
-    mel_spec_type,
     nfe_step,
     sway_sampling_coef,
 )
@@ -88,30 +87,25 @@ def get_spk_emb(audio_path, ort_session):
     return embedding
 
 
-def load_models(config, device):
-    model_cfg = config.get("model_cfg", "src/moviedubber/configs/basemodel.yaml")
-    ckpt_file = config.get("ckpt_file", None)
-    campplus_path = config.get("campplus_path", None)
-    vocab_file = config.get("vocab_file", None)
+def load_models(device):
+    repo_local_path = snapshot_download(repo_id="woak-oa/DeepDubber-V1")
 
-    vocoder_local_path = config.get("vocoder_local_path", None)
+    ckpt_file = os.path.join(repo_local_path, "mmdubber.pt")
+    vocab_file = os.path.join(repo_local_path, "vocab.txt")
+    campplus_path = os.path.join(repo_local_path, "campplus.onnx")
 
-    if ckpt_file is None or vocab_file is None or vocoder_local_path is None or campplus_path is None:
-        raise ValueError("ckpt_file, vocab_file and vocoder_local_path must be specified")
-
-    vocoder_name = config.get("vocoder_name", mel_spec_type)
-
-    vocoder = load_vocoder(local_path=vocoder_local_path, device=device)
-
+    model_cfg = "src/moviedubber/configs/basemodel.yaml"
     model_cls = DiT
     model_cfg = OmegaConf.load(model_cfg).model.arch
     controlnet = ControlNetDiT
+
+    vocoder = load_vocoder(local_path="nvidia/bigvgan_v2_24khz_100band_256x", device=device)
 
     ema_model = load_model(
         model_cls,
         model_cfg,
         ckpt_file,
-        mel_spec_type=vocoder_name,
+        mel_spec_type="bigvgan",
         vocab_file=vocab_file,
         controlnet=controlnet,
         device=device,
@@ -129,8 +123,8 @@ def load_models(config, device):
     return ema_model, vocoder, ort_session
 
 
-def main(config, device, chunk, gen_dir, target_dir, out_dir, idx):
-    ema_model, vocoder, ort_session = load_models(config, device=device)
+def main(device, chunk, gen_dir, target_dir, out_dir, idx):
+    ema_model, vocoder, ort_session = load_models(device=device)
 
     videofeature_extractor = VideoFeatureExtractor(device=device)
 
@@ -271,13 +265,6 @@ if __name__ == "__main__":
         description="Commandline interface for moviedubber infer with Advanced Batch Processing.",
         epilog="Specify options above to override one or more settings from config.",
     )
-    parser.add_argument(
-        "-c",
-        "--config",
-        type=str,
-        default="src/moviedubber/infer/basic.toml",
-        help="The configuration file, default see infer/basic.toml",
-    )
     parser.add_argument("-i", "--input_list", type=str, required=True, help="The val list file")
     parser.add_argument("-s", "--ref_spk_list", type=str, required=True, help="The spk list file")
     parser.add_argument("-o", "--out_dir", type=str, default="data/dubberout", help="The output directory")
@@ -291,8 +278,6 @@ if __name__ == "__main__":
     gpu_ids = args.gpuids.split(",") if args.gpuids else ["0"]
     num_pre = args.nums_workers
     spk_ref_path = args.ref_spk_list
-
-    config = tomli.load(open(args.config, "rb"))
 
     gen_lst = Path(input_list).read_text().splitlines()[1:]
 
@@ -329,7 +314,7 @@ if __name__ == "__main__":
         device = gpu_ids[idx % len(gpu_ids)]
 
         device = f"cuda:{device}"
-        p = mp.Process(target=main, args=(config, device, chunk, gen_dir, target_dir, out_dir, idx))
+        p = mp.Process(target=main, args=(device, chunk, gen_dir, target_dir, out_dir, idx))
         processes.append(p)
         p.start()
 
