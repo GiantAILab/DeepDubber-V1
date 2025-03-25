@@ -7,12 +7,6 @@
 
 ## [DeepDubber-V1: Towards High Quality and Dialogue, Narration, Monologue Adaptive Movie Dubbing Via Multi-Modal Chain-of-Thoughts Reasoning Guidance](https://woka-0a.github.io/DeepDubber-V1/)
 
-<!-- [Ho Kei Cheng](https://hkchengrex.github.io/), [Masato Ishii](https://scholar.google.co.jp/citations?user=RRIO1CcAAAAJ), [Akio Hayakawa](https://scholar.google.com/citations?user=sXAjHFIAAAAJ), [Takashi Shibuya](https://scholar.google.com/citations?user=XCRO260AAAAJ), [Alexander Schwing](https://www.alexander-schwing.de/), [Yuki Mitsufuji](https://www.yukimitsufuji.com/) -->
-
-<!-- University of xxxx, xxxx, and xxxx Corporation -->
-
-<!-- xxxx 2025 -->
-
 ## Results
 
 Videos from V2CAnimation:
@@ -82,17 +76,6 @@ DeepDubber-V1 was trained on several datasets, including [V2CAnimation](https://
 ## Update Logs
 
 - 2025-03-30: Released pre-trained models on proposed dataset and evaluation script.
-
-<!-- ## Citation
-
-```bibtex
-@inproceedings{cheng2025taming,
-  title={Taming Multimodal Joint Training for High-Quality Video-to-Audio Synthesis},
-  author={Cheng, Ho Kei and Ishii, Masato and Hayakawa, Akio and Shibuya, Takashi and Schwing, Alexander and Mitsufuji, Yuki},
-  booktitle={CVPR},
-  year={2025}
-}
-``` -->
 
 ## Acknowledgement and Relevant Repositories
 
