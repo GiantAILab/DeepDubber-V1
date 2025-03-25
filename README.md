@@ -21,7 +21,7 @@ Videos from Grid:
 
 https://github.com/user-attachments/assets/360893bd-6e06-470f-b6f2-0ef723cb8dc7
 
-For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html.
+<!-- For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html. -->
 
 ## Environment
 
