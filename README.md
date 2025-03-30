@@ -9,7 +9,7 @@
 
 ## Results
 
-# Table 1. Objective evaluation of the initial reasoning setting. 
+Objective evaluation of the initial reasoning setting. 
 For speech generation setting, we use the target speaker’s speech as voice prompt if the predict scene type is correct and use random speaker’s speech as voice prompt if the predict scene type is not correct.
 
 | Models Name  | MMLMs based    | Ave.Acc(%) ↑ | Ave.Recall(%) ↑ | A.Recall(%) ↑ | B.Recall(%) ↑ | C.Recall(%) ↑ | SPK-SIM(%) ↑ | WER(%) ↓ | MCD ↓ | MCD-SL ↓ |
