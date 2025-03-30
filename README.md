@@ -9,20 +9,19 @@
 
 ## Results
 
-Objective evaluation of the initial reasoning setting. 
-
+# Table 1. Objective evaluation of the initial reasoning setting. 
 For speech generation setting, we use the target speaker’s speech as voice prompt if the predict scene type is correct and use random speaker’s speech as voice prompt if the predict scene type is not correct.
 
-| Models Name   | MMLMs based     | Scores on dialogue(A), monologue(B) and narration(c) | Speech Generation     |
-|---------------|-----------------|-------------------------------------------------------|-----------------------|
-|               | MMLM-1B [27]    | Ave.Acc(%) ↑    | Ave.Recall(%) ↑    | A.Recall(%) ↑ | B.Recall(%) ↑ | C.Recall(%) ↑ | SPK-SIM(%) ↑ | WER(%) ↓ | MCD ↓ | MCD-SL ↓ |
-| **Qwen [51]** | 84.09           | 82.97           | 86.50             | 68.40           | 94.00        | 83.17       | 23.60    | 8.59   | 8.60 |
-|               | MMLM-4B [29]    | 81.73           | 80.98             | 83.33           | 75.20           | 84.40        | 83.34       | 23.41    | 8.53   | 8.53 |
-| **InternLM [5]** | MMLM-2B [28]    | 84.18           | 81.23             | 90.50            | 59.20           | 94.00        | 82.97       | 23.20    | 8.54   | 8.54 |
-|               | MMLM-8B [30]    | 86.00           | 85.84             | 86.33           | 73.20           | 98.00        | 83.42 (+30.28%) | 23.20    | 8.54   | 8.54 |
-| Dubbing Models| HPMDubbing [14] | -               | -                 | -               | -               | -             | 61.06       | 199.40  | 8.82   | 11.88 |
-|               | Speaker2Dub [69]| -               | -                 | -               | -               | -             | 61.73       | 84.42   | 8.75   | 10.78 |
-|               | StyleDubber [17]| -               | -                 | -               | -               | -             | 64.03       | 52.69   | 8.62   | 8.89 |
+| Models Name  | MMLMs based    | Ave.Acc(%) ↑ | Ave.Recall(%) ↑ | A.Recall(%) ↑ | B.Recall(%) ↑ | C.Recall(%) ↑ | SPK-SIM(%) ↑ | WER(%) ↓ | MCD ↓ | MCD-SL ↓ |
+|--------------|----------------|--------------|-----------------|---------------|---------------|---------------|---------------|-----------|--------|----------|
+| **Qwen [51]** | MMLM-1B [27]  | 84.09        | 82.97           | 86.50         | 68.40         | 94.00         | 83.17         | 23.60     | 8.59   | 8.60     |
+|              | MMLM-4B [29]  | 81.73        | 80.98           | 83.33         | 75.20         | 84.40         | 83.34         | 23.41     | 8.53   | 8.53     |
+| **InternLM [5]** | MMLM-2B [28]  | 84.18        | 81.23           | 90.50         | 59.20         | 94.00         | 82.97         | 23.20     | 8.54   | 8.54     |
+|              | MMLM-8B [30]  | 86.00        | 85.84           | 86.33         | 73.20         | 98.00         | 83.42 (+30.28%) | 23.20     | 8.54   | 8.54     |
+| **Dubbing Models** | HPMDubbing [14] | -            | -               | -             | -             | -             | 61.06         | 199.40    | 8.82   | 11.88    |
+|              | Speaker2Dub [69] | -            | -               | -             | -             | -             | 61.73         | 84.42     | 8.75   | 10.78    |
+|              | StyleDubber [17] | -            | -               | -             | -             | -             | 64.03         | 52.69     | 8.62   | 8.89     |
+
 
 
 Videos from V2CAnimation:
