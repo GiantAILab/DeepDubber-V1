@@ -1,7 +1,7 @@
 <div align="center">
 <p align="center">
   <h2>DeepDubber-V1</h2>
-  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1/">Webpage</a> | <a href="https://huggingface.co/spaces/woak-oa/Deepdubber-V1">Huggingface Demo</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> 
+  <a href="https://arxiv.org/abs/xxxx.xxxx">Paper</a> | <a href="https://woka-0a.github.io/DeepDubber-V1/">Webpage</a> | <a href="https://huggingface.co/spaces/woak-oa/Deepdubber-V1">Huggingface Demo</a> | <a href="https://huggingface.co/woak-oa/DeepDubber-V1/tree/main">Models</a> | <a href="https://colab.research.google.com/drive/1sGuae2Q8Ske8Ai-rW68Px6YuoGL1uZZd?usp=sharing">Colab Demo</a> | <a href="https://replicate.com/woka-0a/deepdubber-v1">Replicate Demo</a> 
 </p>
 </div>
 
