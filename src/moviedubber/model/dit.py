@@ -27,17 +27,14 @@ from .modules import (
 )
 
 
-# Text embedding
-
-
 class TextEmbedding(nn.Module):
     def __init__(self, text_num_embeds, text_dim, conv_layers=0, conv_mult=2):
         super().__init__()
-        self.text_embed = nn.Embedding(text_num_embeds + 1, text_dim)  # use 0 as filler token
+        self.text_embed = nn.Embedding(text_num_embeds + 1, text_dim)
 
         if conv_layers > 0:
             self.extra_modeling = True
-            self.precompute_max_pos = 4096  # ~44s of 24khz audio
+            self.precompute_max_pos = 4096
             self.register_buffer("freqs_cis", precompute_freqs_cis(text_dim, self.precompute_max_pos), persistent=False)
             self.text_blocks = nn.Sequential(
                 *[ConvNeXtV2Block(text_dim, text_dim * conv_mult) for _ in range(conv_layers)]
@@ -45,33 +42,27 @@ class TextEmbedding(nn.Module):
         else:
             self.extra_modeling = False
 
-    def forward(self, text: int["b nt"], seq_len, drop_text=False):  # noqa: F722
-        text = text + 1  # use 0 as filler token. preprocess of batch pad -1, see list_str_to_idx()
-        text = text[:, :seq_len]  # curtail if character tokens are more than the mel spec tokens
+    def forward(self, text, seq_len, drop_text=False):
+        text = text + 1
+        text = text[:, :seq_len]
         batch, text_len = text.shape[0], text.shape[1]
         text = F.pad(text, (0, seq_len - text_len), value=0)
 
-        for idx, _drop in enumerate(drop_text):  # cfg for text
+        for idx, _drop in enumerate(drop_text):
             if _drop:
                 text[idx] = torch.zeros_like(text[idx])
 
-        text = self.text_embed(text)  # b n -> b n d
+        text = self.text_embed(text)
 
-        # possible extra modeling
         if self.extra_modeling:
-            # sinus pos emb
             batch_start = torch.zeros((batch,), dtype=torch.long)
             pos_idx = get_pos_embed_indices(batch_start, seq_len, max_pos=self.precompute_max_pos)
             text_pos_embed = self.freqs_cis[pos_idx]
             text = text + text_pos_embed
 
-            # convnextv2 blocks
             text = self.text_blocks(text)
 
         return text
-
-
-# noised input audio and context mixing embedding
 
 
 class InputEmbedding(nn.Module):
@@ -80,8 +71,8 @@ class InputEmbedding(nn.Module):
         self.proj = nn.Linear(mel_dim * 2 + text_dim, out_dim)
         self.conv_pos_embed = ConvPositionEmbedding(dim=out_dim)
 
-    def forward(self, x: float["b n d"], cond: float["b n d"], text_embed: float["b n d"], drop_audio_cond=False):  # noqa: F722
-        for idx, _drop in enumerate(drop_audio_cond):  # cfg for cond audio
+    def forward(self, x, cond, text_embed, drop_audio_cond=False):
+        for idx, _drop in enumerate(drop_audio_cond):
             if _drop:
                 cond[idx] = torch.zeros_like(cond[idx])
 
@@ -96,20 +87,10 @@ class InputEmbeddingO(nn.Module):
         self.proj = nn.Linear(mel_dim + 512 + text_dim + 192 + 32, out_dim)
         self.conv_pos_embed = ConvPositionEmbedding(dim=out_dim)
 
-    def forward(
-        self,
-        x: float["b n d"],  # noqa: F722
-        text_emb: float["b n d"],  # noqa: F722
-        video_emb: float["b n d"],  # noqa: F722
-        spk_emb: float["b n d"],  # noqa: F722
-        caption_emb: float["b n d"],  # noqa: F722
-    ):
+    def forward(self, x, text_emb, video_emb, spk_emb, caption_emb):
         x = self.proj(torch.cat((x, text_emb, video_emb, spk_emb, caption_emb), dim=-1))
         x = self.conv_pos_embed(x) + x
         return x
-
-
-# Transformer backbone using DiT blocks
 
 
 class DiT(nn.Module):
@@ -149,17 +130,7 @@ class DiT(nn.Module):
         self.norm_out = AdaLayerNormZero_Final(dim)  # final modulation
         self.proj_out = nn.Linear(dim, mel_dim)
 
-    def forward(
-        self,
-        x: float["b n d"],  # nosied input audio  # noqa: F722
-        cond: float["b n d"],  # masked cond audio  # noqa: F722
-        text: int["b nt"],  # text  # noqa: F722
-        time: float["b"] | float[""],  # time step  # noqa: F821 F722
-        drop_audio_cond,  # cfg for cond audio
-        drop_text,  # cfg for text
-        mask: bool["b n"] | None = None,  # noqa: F722
-        controlnet_embeds: float["b n d"] | None = None,  # noqa: F722
-    ):
+    def forward(self, x, cond, text, time, drop_audio_cond, drop_text, mask=None, controlnet_embeds=None):
         batch, seq_len = x.shape[0], x.shape[1]
         if time.ndim == 0:
             time = time.repeat(batch)
@@ -202,8 +173,6 @@ class ControlNetDiT(nn.Module):
         text_num_embeds=256,
         text_dim=None,
         conv_layers=0,
-        long_skip_connection=False,
-        checkpoint_activations=False,
         duration_predictor=None,
     ):
         super().__init__()
@@ -239,18 +208,7 @@ class ControlNetDiT(nn.Module):
 
         self.duration_predictor = duration_predictor
 
-    def forward(
-        self,
-        x: float["b n d"],  # nosied input audio  # noqa: F722
-        text: int["b nt"],  # text  # noqa: F722
-        clip: float["b n d"],  # video clip # noqa: F722
-        spk_emb: float["b d"],  # speaker embedding  # noqa: F722
-        time: float["b"] | float[""],  # time step  # noqa: F821 F722
-        caption: float["b nt"] | None = None,  # caption  # noqa: F722
-        mask: bool["b n"] | None = None,  # noqa: F722
-        lens: int["b"] | None = None,  # noqa: F722, F821
-        return_dur: bool = False,  # return duration prediction
-    ):
+    def forward(self, x, text, clip, spk_emb, time, caption=None, mask=None, lens=None, return_dur=False):
         batch, seq_len = x.shape[0], x.shape[1]
 
         if time.ndim == 0:
@@ -279,7 +237,7 @@ class ControlNetDiT(nn.Module):
 
         info = []
         for i, block in enumerate(self.transformer_blocks1):
-            x = block(x, t, mask=mask, rope=rope)  # 'b n 1024'
+            x = block(x, t, mask=mask, rope=rope)
 
             info.append(x)
 

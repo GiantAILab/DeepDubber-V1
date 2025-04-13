@@ -11,8 +11,6 @@ d - dimension
 
 from __future__ import annotations
 
-from typing import Callable
-
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -34,9 +32,7 @@ class CFM(nn.Module):
         self,
         transformer: nn.Module,
         sigma=0.0,
-        odeint_kwargs: dict = dict(
-            method="euler"  # 'midpoint'
-        ),
+        odeint_kwargs: dict = dict(method="euler"),
         num_channels=None,
         mel_spec_module: nn.Module | None = None,
         mel_spec_kwargs: dict = dict(),
@@ -71,20 +67,18 @@ class CFM(nn.Module):
     @torch.no_grad()
     def sample(
         self,
-        cond: float["b n d"] | float["b nw"],  # noqa: F722
-        text: int["b nt"] | list[str],  # noqa: F722
-        clip: float["b n d"],  # noqa: F722
-        duration: int | int["b"],  # noqa: F821
+        cond,
+        text,
+        clip,
+        duration,
         *,
-        caption_emb: float["b n d"] | None = None,  # noqa: F722
-        spk_emb: float["b n d"] | None = None,  # noqa: F722
-        lens: int["b"] | None = None,  # noqa: F821
+        caption_emb,
+        spk_emb=None,
+        lens=None,
         steps=32,
-        cfg_strength=1.0,
-        sway_sampling_coef=None,
-        seed: int | None = None,
+        seed=None,
         max_duration=4096,
-        vocoder: Callable[[float["b d n"]], float["b nw"]] | None = None,  # noqa: F722
+        vocoder=None,
         no_ref_audio=False,
         duplicate_test=False,
         t_inter=0.1,
@@ -120,8 +114,6 @@ class CFM(nn.Module):
 
         if isinstance(duration, int):
             duration = torch.full((batch,), duration, device=device, dtype=torch.long)
-
-        # duration = torch.maximum(lens + 1, duration)
 
         duration = duration.clamp(max=max_duration)
         max_duration = duration.amax()
@@ -193,8 +185,6 @@ class CFM(nn.Module):
             steps = int(steps * (1 - t_start))
 
         t = torch.linspace(t_start, 1, steps + 1, device=self.device, dtype=step_cond.dtype)
-        if sway_sampling_coef is not None:
-            t = t + sway_sampling_coef * (torch.cos(torch.pi / 2 * t) - 1 + t)
 
         trajectory = odeint(fn, y0, t, **self.odeint_kwargs)
 

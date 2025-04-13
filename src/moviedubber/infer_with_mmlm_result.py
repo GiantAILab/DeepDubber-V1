@@ -13,7 +13,6 @@ import torch.nn.functional as F
 import torchaudio
 import torchaudio.compliance.kaldi as kaldi
 from huggingface_hub import snapshot_download
-from moviepy import AudioFileClip, VideoFileClip
 from omegaconf import OmegaConf
 from pydub import AudioSegment
 from tqdm import tqdm
@@ -24,53 +23,14 @@ sys.path.insert(0, str(src_path))
 sys.path.append(str(src_path / "src/third_party/BigVGAN"))
 
 from src.moviedubber.infer.utils_infer import (
-    cfg_strength,
-    chunk_text,
     load_model,
     load_vocoder,
+    merge_video_audio,
     nfe_step,
-    sway_sampling_coef,
 )
 from src.moviedubber.infer.video_preprocess import VideoFeatureExtractor
 from src.moviedubber.model import ControlNetDiT, DiT
 from src.moviedubber.model.utils import convert_char_to_pinyin
-
-
-def concat_movie_with_audio(wav, video_path, out_dir):
-    if not os.path.exists(wav):
-        raise FileNotFoundError(f"Audio file {wav} does not exist")
-
-    if not os.path.exists(video_path):
-        raise FileNotFoundError(f"Video file {video_path} does not exist")
-
-    try:
-        with (
-            AudioFileClip(str(wav)) as audio_clip,
-            VideoFileClip(str(video_path)) as video_clip,
-        ):
-            duration = min(video_clip.duration, audio_clip.duration)
-
-            video_subclip = video_clip.subclipped(0, duration)
-            audio_subclip = audio_clip.subclipped(0, duration)
-
-            final_video = video_subclip.with_audio(audio_subclip)
-
-            output_path = wav.replace(".wav", ".mp4")
-
-            final_video.write_videofile(
-                str(output_path),
-                codec="libx264",
-                audio_codec="mp3",
-                fps=25,
-                logger=None,
-                threads=1,
-                temp_audiofile_path=out_dir,
-            )
-
-    except Exception as e:
-        print(f"Error processing {wav} {video_path}: {str(e)}")
-
-    return output_path
 
 
 def get_spk_emb(audio_path, ort_session):
@@ -101,7 +61,7 @@ def load_models(device):
 
     vocoder = load_vocoder(local_path="nvidia/bigvgan_v2_24khz_100band_256x", device=device)
 
-    ema_model = load_model(
+    model = load_model(
         model_cls,
         model_cfg,
         ckpt_file,
@@ -120,33 +80,38 @@ def load_models(device):
         sess_options=option,
         providers=providers,
     )
-    return ema_model, vocoder, ort_session
+    return model, vocoder, ort_session
 
 
 def main(device, chunk, gen_dir, target_dir, out_dir, idx):
-    ema_model, vocoder, ort_session = load_models(device=device)
+    model, vocoder, ort_session = load_models(device=device)
 
     videofeature_extractor = VideoFeatureExtractor(device=device)
 
     for it in tqdm(chunk, total=len(chunk), position=idx, desc=f"Processing {idx}"):
-        wav, video, text, ref_wav = it
+        wav_path, video_path, text, ref_wav = it
 
-        with open(f"{target_dir}/{wav.split('/')[-1].split('.')[0]}.txt", "a") as f:
-            f.write(text + "\n")
-
-        if wav.endswith(".mp3"):
-            audio = AudioSegment.from_mp3(wav)
-
-            wav_file = wav.replace(".mp3", ".wav")
-            audio.export(wav_file, format="wav")
-
-        wav = Path(wav).with_suffix(".wav")
-        if wav.exists() is False:
+        _out_path = osp.join(gen_dir, f"{Path(wav_path).stem}.wav")
+        if os.path.exists(_out_path):
             continue
 
-        os.system(f"cp {wav} {target_dir}/")
+        with open(f"{target_dir}/{Path(wav_path).stem}.txt", "a") as f:
+            f.write(text + "\n")
 
-        gen_audio, sr = torchaudio.load(str(wav))
+        if wav_path.endswith(".mp3"):
+            audio = AudioSegment.from_mp3(wav_path)
+
+            wav_file = wav_path.replace(".mp3", ".wav")
+            audio.export(wav_file, format="wav")
+
+        wav_path = Path(wav_path).with_suffix(".wav")
+        if wav_path.exists() is False:
+            raise FileNotFoundError(f"{wav_path} not found ")
+
+        os.system(f"cp {wav_path} {target_dir}/")
+        os.system(f"cp {video_path} {target_dir}/")
+
+        gen_audio, sr = torchaudio.load(str(wav_path))
         resampler = torchaudio.transforms.Resample(sr, 24000)
         if sr != 24000:
             gen_audio = resampler(gen_audio)
@@ -154,25 +119,21 @@ def main(device, chunk, gen_dir, target_dir, out_dir, idx):
         if gen_audio.shape[0] > 1:
             gen_audio = torch.mean(gen_audio, dim=0, keepdim=True)
 
-        gen_video = video
-        gen_clip_path = gen_video.replace(".mp4", ".clip")
+        clip_path = video_path.replace(".mp4", ".clip")
 
-        if not os.path.exists(gen_clip_path):
-            gen_clip = videofeature_extractor.extract_features(gen_video)
+        if not os.path.exists(clip_path):
+            gen_clip = videofeature_extractor.extract_features(video_path)
 
-            torch.save(gen_clip.detach().cpu(), gen_clip_path)
+            torch.save(gen_clip.detach().cpu(), clip_path)
 
         else:
-            gen_clip = torch.load(gen_clip_path, weights_only=True).to(device=device, dtype=torch.float32)
+            gen_clip = torch.load(clip_path, weights_only=True).to(device=device, dtype=torch.float32)
 
         if ref_wav == "None":
             use_ref_audio = False
             gen_text_ = text
-
             gen_clip_ = gen_clip
-
             ref_audio_ = gen_audio
-
             spk_emb = torch.zeros(1, 1, 192).to(device=device, dtype=torch.float32)
 
         else:
@@ -226,19 +187,16 @@ def main(device, chunk, gen_dir, target_dir, out_dir, idx):
         gen_clip_ = gen_clip_.unsqueeze(0).to(device=device, dtype=torch.float32).transpose(1, 2)
         gen_clip_ = F.interpolate(gen_clip_, size=duration, mode="linear", align_corners=False).transpose(1, 2)
 
-        gen_text_batches = chunk_text(gen_text_, max_chars=1024)
-        final_text_list = convert_char_to_pinyin(gen_text_batches)
+        final_text_list = convert_char_to_pinyin([gen_text_])
 
         with torch.inference_mode():
-            generated, _ = ema_model.sample(
+            generated, _ = model.sample(
                 cond=ref_audio_.to(device),
                 text=final_text_list,
                 clip=gen_clip_,
                 spk_emb=spk_emb,
                 duration=duration,
                 steps=nfe_step,
-                cfg_strength=cfg_strength,
-                sway_sampling_coef=sway_sampling_coef,
                 no_ref_audio=not use_ref_audio,
             )
 
@@ -252,9 +210,9 @@ def main(device, chunk, gen_dir, target_dir, out_dir, idx):
 
             generated_wave = generated_wave.squeeze().cpu().numpy()
 
-            out_path = osp.join(gen_dir, f"{wav.stem}.wav")
+            out_path = osp.join(gen_dir, f"{wav_path.stem}.wav")
             soundfile.write(out_path, generated_wave, samplerate=24000)
-            _ = concat_movie_with_audio(out_path, gen_video, out_dir)
+            merge_video_audio(video_path, out_path, osp.join(gen_dir, f"{wav_path.stem}.mp4"), out_dir)
 
 
 if __name__ == "__main__":
