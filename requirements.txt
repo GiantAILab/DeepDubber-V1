@@ -235,3 +235,5 @@ yacs==0.1.8
 yapf==0.40.1
 yarl==1.18.3
 zipp==3.21.0
+onnxruntime-gpu==1.18.0
+onnxruntime==1.18.0
