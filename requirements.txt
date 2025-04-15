@@ -208,10 +208,7 @@ timm==0.9.12
 tokenizers==0.19.1
 toml==0.10.2
 tomli==2.2.1
-torch==2.4.1+cu118
-torchaudio==2.4.1+cu118
 torchdiffeq==0.2.5
-torchvision==0.19.1+cu118
 tornado==6.4.2
 tqdm==4.67.1
 transformers==4.42.1
