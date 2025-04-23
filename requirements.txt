@@ -30,7 +30,6 @@ cycler==0.12.1
 datasets==3.3.2
 decorator==5.2.1
 decord==0.6.0
-deepspeed==0.15.4
 dill==0.3.8
 docstring_parser==0.16
 einops==0.8.1
@@ -41,7 +40,6 @@ exceptiongroup==1.2.2
 fastapi==0.115.8
 ffmpy==0.5.0
 filelock==3.13.1
-flash-attn==2.6.3
 flatbuffers==25.2.10
 fonttools==4.56.0
 frozendict==2.4.6
