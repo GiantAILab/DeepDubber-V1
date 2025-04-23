@@ -92,7 +92,6 @@ matplotlib==3.9.4
 mdit-py-plugins==0.3.3
 mdurl==0.1.2
 mmcls==0.25.0
-mmcv-full==1.6.2
 mmsegmentation==0.30.0
 model-index==0.1.11
 moviepy==2.1.2
