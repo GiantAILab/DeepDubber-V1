@@ -46,7 +46,7 @@ def load_checkpoint(model, ckpt_path, device: str, dtype=torch.float32):
     model = model.to(dtype)
 
     checkpoint = torch.load(ckpt_path, map_location=device, weights_only=True)
-    model.load_state_dict(checkpoint["model_state_dict"], strict=True)
+    model.load_state_dict(checkpoint, strict=True)
 
     del checkpoint
     torch.cuda.empty_cache()
