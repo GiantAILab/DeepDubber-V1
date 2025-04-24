@@ -13,10 +13,7 @@ pydub==0.25.1
 pymcd==0.2.1
 pypinyin==0.54.0
 soundfile==0.13.1
-torch==2.6.0+cu118
-torchaudio==2.6.0+cu118
 torchdiffeq==0.2.5
-torchvision==0.22.0+cu118
 tqdm==4.67.1
 transformers==4.51.3
 x_transformers==2.2.12
