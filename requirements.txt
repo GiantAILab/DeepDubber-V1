@@ -18,3 +18,4 @@ tqdm==4.67.1
 transformers==4.51.3
 x_transformers==2.2.12
 opencv-python==4.11.0.86
+matplotlib==3.10.1
