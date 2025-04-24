@@ -4,7 +4,7 @@ huggingface_hub==0.30.2
 imageio==2.37.0
 jieba==0.42.1
 librosa==0.11.0
-numpy==2.2.5
+numpy==2.0.0
 omegaconf==2.3.0
 onnxruntime==1.21.1
 pandas==2.2.3
