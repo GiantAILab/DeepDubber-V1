@@ -57,7 +57,7 @@ def get_spk_emb(audio_path, ort_session):
 
 
 def load_models(device):
-    repo_local_path = snapshot_download(repo_id="woak-oa/DeepDubber-V1", local_dir="./DeepDubber-V1")
+    repo_local_path = "./DeepDubber-V1"
 
     ckpt_file = os.path.join(repo_local_path, "mmdubber.pt")
     vocab_file = os.path.join(repo_local_path, "vocab.txt")
@@ -80,7 +80,7 @@ def load_models(device):
     )
 
     logging.info("Loading vocoder...")
-    vocoder = load_vocoder(local_path="nvidia/bigvgan_v2_24khz_100band_256x", device=device)
+    vocoder = load_vocoder(local_path="./bigvgan_v2_24khz_100band_256x", device=device)
     logging.info("Vocoder loaded.")
 
     logging.info("Loading ONNX model...")
@@ -105,9 +105,16 @@ class Predictor(BasePredictor):
         self.model, self.vocoder, self.ort_session = load_models(device=device)
         logging.info("Model loaded.")
 
-        self.videofeature_extractor = VideoFeatureExtractor(device=device)
-        self.tokenizer = AutoTokenizer.from_pretrained("google-t5/t5-small")
-        self.t5_model = T5EncoderModel.from_pretrained("google-t5/t5-small")
+        logging.info("Loading video feature extractor...")
+        self.videofeature_extractor = VideoFeatureExtractor(
+            pretrained_model_name_or_path="./clip-vit-large-patch14", device=device
+        )
+        logging.info("Video feature extractor loaded.")
+
+        logging.info("Loading T5 model...")
+        self.tokenizer = AutoTokenizer.from_pretrained("./t5-small")
+        self.t5_model = T5EncoderModel.from_pretrained("./t5-small")
+        logging.info("T5 model loaded.")
 
     def predict(
         self,
