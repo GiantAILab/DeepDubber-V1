@@ -173,7 +173,7 @@ class Predictor(BasePredictor):
         soundfile.write(audio_output_path, generated_wave, 24000)
         logging.info(f"Generated audio saved to {audio_output_path}")
 
-        video_output_path = f"/tmp/generated_{uuid4[:6]}.mp4"
+        video_output_path = f"/tmp/generated_{Path(video).stem}.mp4"
         _ = merge_video_audio(video, audio_output_path, video_output_path, 0, v_dur)
 
         # remove the tmp audio file
