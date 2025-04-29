@@ -127,8 +127,9 @@ class Predictor(BasePredictor):
         # processed_input = preprocess(image)
         # output = self.model(processed_image, scale)
         # return postprocess(output)
-
-        v_dur = get_video_duration(video_path=str(video))
+        video = str(video)
+        logging.info(f"Video path: {video}")
+        v_dur = get_video_duration(video_path=video)
         duration = int(v_dur * 24000 // 256)
         v_clip = self.videofeature_extractor.extract_features(video).to(device, dtype=torch.float32)
         v_clip = F.interpolate(
