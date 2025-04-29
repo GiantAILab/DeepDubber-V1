@@ -169,7 +169,7 @@ class Predictor(BasePredictor):
             generated_wave = generated_wave.squeeze().cpu().numpy()
 
         # save generated audio with tempfile
-        audio_output_path = "/tmp/generated.wav"
+        audio_output_path = f"/tmp/generated_{Path(video).stem}.wav"
         soundfile.write(audio_output_path, generated_wave, 24000)
         logging.info(f"Generated audio saved to {audio_output_path}")
 
