@@ -123,7 +123,7 @@ class Predictor(BasePredictor):
         subtitle: str = Input(description="Grayscale input video"),
         description: str = Input(description="Grayscale input video"),
         ref_wav: Path = Input(description="Grayscale input video", default=None),
-    ) -> cog.File:
+    ) -> Path:
         """Run a single prediction on the model"""
         # processed_input = preprocess(image)
         # output = self.model(processed_image, scale)
@@ -179,4 +179,4 @@ class Predictor(BasePredictor):
         # remove the tmp audio file
         os.remove(audio_output_path)
 
-        return cog.File.from_path(video_output_path)
+        return Path(video_output_path)
