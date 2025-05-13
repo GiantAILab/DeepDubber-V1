@@ -22,9 +22,25 @@ For speech generation setting, we use the target speaker’s speech as voice pro
 |              | Speaker2Dub | -            | -               | -             | -             | -             | 61.73         | 84.42     | 8.75   | 10.78    |
 |              | StyleDubber | -            | -               | -             | -             | -             | 64.03         | 52.69     | 8.62   | 8.89     |
 
+Videos from CoTMovieDubbing:
 
+https://github.com/user-attachments/assets/9de63bc2-e883-4e69-bb9e-d85ae60be7d5
 
-Videos from V2CAnimation:
+https://github.com/user-attachments/assets/48addf0b-bab0-4265-a8fd-e51d17fd083f
+
+https://github.com/user-attachments/assets/dd5f1f3a-4cab-4201-8700-f9cb2f9181d5
+
+https://github.com/user-attachments/assets/55116654-d092-4600-9a1d-72a93e43a453
+
+https://github.com/user-attachments/assets/d30cdf8c-18e4-4947-9c95-2b4427b0b8b9
+
+https://github.com/user-attachments/assets/864a34f1-8bfb-469d-a3f1-beee2ad14a6b
+
+https://github.com/user-attachments/assets/51c8f725-d745-4ea6-bed0-b0a4073f657b
+
+https://github.com/user-attachments/assets/c7d1b293-78c0-42b4-9f1f-55cf7a8d4ae0
+
+<!-- Videos from V2CAnimation:
 
 https://github.com/user-attachments/assets/5d78401e-efc6-4034-b66b-047aad129338
 
@@ -34,7 +50,7 @@ https://github.com/user-attachments/assets/58ab9155-c088-44f8-be5e-1967e01a94bc
 
 Videos from Grid:
 
-https://github.com/user-attachments/assets/360893bd-6e06-470f-b6f2-0ef723cb8dc7
+https://github.com/user-attachments/assets/360893bd-6e06-470f-b6f2-0ef723cb8dc7 -->
 
 <!-- For more results, visit https://xxxxx.com/DeepDubber-V1/video_main.html. -->
 
