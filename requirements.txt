@@ -1,9 +1,9 @@
 --index-url https://mirrors.aliyun.com/pypi/simple/
 --find-links https://mirrors.aliyun.com/pytorch-wheels/cu118/
 # --extra-index-url https://download.pytorch.org/whl/cu118
-torch==2.6.0+cu118
-torchaudio==2.6.0+cu118
-torchvision==0.21.0+cu118
+# torch==2.6.0+cu118
+# torchaudio==2.6.0+cu118
+# torchvision==0.21.0+cu118
 decord
 evaluate==0.4.3
 huggingface_hub==0.30.2
@@ -25,3 +25,5 @@ transformers==4.51.3
 x_transformers==2.2.12
 opencv-python==4.11.0.86
 matplotlib==3.10.1
+python-dotenv==1.1.1
+timm==1.0.19

@@ -47,8 +47,9 @@ def get_spk_emb(audio_path, ort_session):
     return embedding
 
 
-def load_models(device):
-    repo_local_path = snapshot_download(repo_id="woak-oa/DeepDubber-V1")
+def load_models(repo_local_path=None, device="cuda"):
+    if repo_local_path is None or os.path.exists(repo_local_path) is False:
+        repo_local_path = snapshot_download(repo_id="woak-oa/DeepDubber-V1")
 
     ckpt_file = os.path.join(repo_local_path, "mmdubber.pt")
     vocab_file = os.path.join(repo_local_path, "vocab.txt")
