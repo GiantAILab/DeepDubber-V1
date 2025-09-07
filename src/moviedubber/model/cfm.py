@@ -64,8 +64,9 @@ class CFM(nn.Module):
         caption_emb,
         spk_emb=None,
         lens=None,
-        steps=32,
+        steps=64,
         seed=None,
+        no_ref_audio=None,  # for compatibility
     ):
         self.eval()
 
@@ -97,8 +98,8 @@ class CFM(nn.Module):
                 text=text,
                 time=t,
                 mask=mask,
-                drop_audio_cond=[False],
-                drop_text=[False],
+                drop_audio_cond=False,
+                drop_text=False,
                 controlnet_embeds=controlnet_embeds,
             )
 
@@ -108,8 +109,8 @@ class CFM(nn.Module):
                 text=text,
                 time=t,
                 mask=mask,
-                drop_audio_cond=[True],
-                drop_text=[True],
+                drop_audio_cond=True,
+                drop_text=True,
                 controlnet_embeds=None,
             )
 
