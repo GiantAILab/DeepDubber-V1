@@ -48,9 +48,8 @@ class TextEmbedding(nn.Module):
         batch, text_len = text.shape[0], text.shape[1]
         text = F.pad(text, (0, seq_len - text_len), value=0)
 
-        for idx, _drop in enumerate(drop_text):
-            if _drop:
-                text[idx] = torch.zeros_like(text[idx])
+        if drop_text:
+            text = torch.zeros_like(text)
 
         text = self.text_embed(text)
 
@@ -72,9 +71,8 @@ class InputEmbedding(nn.Module):
         self.conv_pos_embed = ConvPositionEmbedding(dim=out_dim)
 
     def forward(self, x, cond, text_embed, drop_audio_cond=False):
-        for idx, _drop in enumerate(drop_audio_cond):
-            if _drop:
-                cond[idx] = torch.zeros_like(cond[idx])
+        if drop_audio_cond:
+            cond = torch.zeros_like(cond)
 
         x = self.proj(torch.cat((x, cond, text_embed), dim=-1))
         x = self.conv_pos_embed(x) + x
@@ -229,7 +227,7 @@ class ControlNetDiT(nn.Module):
         caption_emb = F.normalize(caption, dim=-1)
         caption_emb = self.caption_embed_affine_layer(caption_emb)
 
-        text_embed = self.text_embed(text, seq_len, drop_text=[False])
+        text_embed = self.text_embed(text, seq_len, drop_text=False)
 
         x = self.input_embed(x, text_embed, clip_emb, spk_emb, caption_emb)
 
