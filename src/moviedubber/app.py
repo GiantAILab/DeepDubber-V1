@@ -81,24 +81,23 @@ def deepdubber(video_path: str, subtitle_text: str, audio_path: str = None) -> s
     print(f"MMLM response: {response}")
 
     try:
-        response = response.split("<CAPTION>")[1].split("</CAPTION>")[0].strip()
+        conclusion = response.split("<CONCLUSION>")[1].split("</CONCLUSION>")[0].strip()
     except Exception as e:
         print(f"Error: {e}, response: {response}")
-        response = response.strip()[0]
-
-    if response == "A":
-        response = "dialogue"
-    elif response == "B":
-        response = "monologue"
-    elif response == "C":
-        response = "narration"
+        conclusion = response.strip()[0]
+    if conclusion == "A":
+        d_stype = "dialogue"
+    elif conclusion == "B":
+        d_stype = "monologue"
+    elif conclusion == "C":
+        d_stype = "narration"
     else:
-        response = ""
+        d_stype = ""
 
     gen_clip = videofeature_extractor.extract_features(video_path)
     gen_text = subtitle_text
 
-    desc_input_ids = t5_tokenizer(response, return_tensors="pt").input_ids
+    desc_input_ids = t5_tokenizer(d_stype, return_tensors="pt").input_ids
     desc_outputs = t5_model(input_ids=desc_input_ids)
     caption_emb = desc_outputs.last_hidden_state.detach().to(device, dtype=torch.float32)
 
