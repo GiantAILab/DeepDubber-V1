@@ -1,6 +1,7 @@
 # A unified script for inference process
 # Make adjustments inside functions, and consider both gradio and cli scripts if need to change func output format
 
+import re
 import subprocess as sp
 
 import cv2
@@ -144,3 +145,31 @@ def get_video_duration(video_path):
 
     duration = total_frames / fps
     return duration
+
+
+def chunk_text(text, max_chars=135):
+    """
+    Splits the input text into chunks, each with a maximum number of characters.
+    Args:
+        text (str): The text to be split.
+        max_chars (int): The maximum number of characters per chunk.
+    Returns:
+        List[str]: A list of text chunks.
+    """
+    chunks = []
+    current_chunk = ""
+    # Split the text into sentences based on punctuation followed by whitespace
+    sentences = re.split(r"(?<=[;:,.!?])\s+|(?<=[；：，。！？])", text)
+
+    for sentence in sentences:
+        if len(current_chunk.encode("utf-8")) + len(sentence.encode("utf-8")) <= max_chars:
+            current_chunk += sentence + " " if sentence and len(sentence[-1].encode("utf-8")) == 1 else sentence
+        else:
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+            current_chunk = sentence + " " if sentence and len(sentence[-1].encode("utf-8")) == 1 else sentence
+
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+
+    return chunks

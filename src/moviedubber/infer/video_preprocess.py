@@ -172,13 +172,13 @@ class VideoFeatureExtractor:
         self.device = device
 
         self.processor = CLIPImageProcessor.from_pretrained(pretrained_model_name_or_path)
-        self.model = CLIPVisionModelWithProjection.from_pretrained(pretrained_model_name_or_path).to(self.device).half()
+        self.model = CLIPVisionModelWithProjection.from_pretrained(pretrained_model_name_or_path).to(self.device)
 
     def extract_features(self, video_path):
         images = process_video(video_path, self.processor)
         if images is None:
             return None
-        clip_feature = self.model(images.to(self.device).half()).image_embeds
+        clip_feature = self.model(images.to(self.device)).image_embeds
 
         return clip_feature
 
